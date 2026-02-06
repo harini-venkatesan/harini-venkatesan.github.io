@@ -225,6 +225,51 @@ h2::after {
   font-weight: 600;
 }
 
+.publication-item {
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-sage) 100%);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin: 1rem 0;
+  transition: var(--transition);
+}
+
+.publication-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.publication-item p {
+  margin-bottom: 0;
+}
+
+.pdf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-top: 0.8rem;
+  transition: var(--transition);
+  box-shadow: 0 2px 4px rgba(199, 57, 43, 0.2);
+}
+
+.pdf-link:hover {
+  background: linear-gradient(135deg, #a93226 0%, #c0392b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(199, 57, 43, 0.3);
+  color: white;
+}
+
+.pdf-link i {
+  font-size: 1rem;
+}
+
 .teaching-content p {
   margin-bottom: 1.5rem;
   font-size: 1.1rem;
