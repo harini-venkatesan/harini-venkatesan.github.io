@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Internet History Open-Note Game</title>
+<style>
+:root{
+  --bg:#07111f;--panel:#0f172a;--card:#172033;--ink:#f8fafc;--muted:#cbd5e1;
+  --accent:#f97316;--good:#22c55e;--warn:#facc15;--blue:#38bdf8;--line:#ffffff24;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button{font:inherit;cursor:pointer;border:0}
+header{position:sticky;top:0;z-index:10;background:#07111ff7;border-bottom:1px solid var(--line);padding:12px 18px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+h1{font-size:1.28rem;margin:0}.subtitle{margin:.15rem 0 0;color:var(--muted);font-size:.92rem}.progress{color:var(--warn);font-weight:950;white-space:nowrap}
+main{max-width:1120px;margin:0 auto;padding:16px 20px 34px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tab,.btn{border-radius:12px;padding:9px 13px;font-weight:900}.tab{background:#ffffff12;color:#fff;border:1px solid var(--line)}.tab.active,.btn.primary{background:var(--accent);color:#111827}.btn{background:#f8fafc;color:#111827}.btn.blue{background:var(--blue);color:#082f49}.btn.good{background:var(--good);color:#04130a}.btn.ghost{background:#ffffff12;color:#fff;border:1px solid var(--line)}
+.panel{display:none;background:#0f172acc;border:1px solid #ffffff20;border-radius:20px;padding:18px}.panel.active{display:block}.toprow{display:flex;justify-content:space-between;gap:14px;align-items:center}.title{font-size:1.45rem;margin:0}.instructions{font-size:.98rem;color:var(--muted);margin:.25rem 0 0}.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.box{background:#ffffff12;border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:14px}.startScreen{min-height:300px;display:flex;align-items:center;justify-content:center;text-align:center}.startScreen h3{font-size:2.15rem;margin:.2rem 0}.startScreen p{color:var(--muted);font-size:1.08rem;max-width:760px}.note{color:var(--muted);font-size:.95rem;font-weight:750}.question{font-size:2rem;line-height:1.12;font-weight:1000;margin:16px 0}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.choice{background:var(--card);border:1px solid var(--line);border-radius:14px;text-align:center;padding:14px;font-size:1.08rem;font-weight:950}.choice.correct{background:#14532d;border-color:#22c55e;color:#dcfce7}.choice.small{text-align:left;font-size:1rem}.promptBox{background:#0b1220;border:1px solid #ffffff1f;border-radius:16px;padding:15px;margin-top:14px}.promptTitle{color:var(--warn);font-size:1rem;text-transform:uppercase;letter-spacing:.08em;font-weight:1000;margin-bottom:7px}.answer{display:none;background:#062b1b;border:1px solid #22c55e88;border-radius:14px;padding:14px;margin-top:14px}.answer.show{display:block}.tag{display:inline-block;background:var(--warn);color:#111827;border-radius:999px;padding:5px 11px;font-weight:1000;margin-bottom:8px}.qbar{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;margin-top:12px}.qdot{height:20px;border-radius:6px;background:#ffffff18;border:1px solid #ffffff1f;color:#e2e8f0;font-size:.68rem;font-weight:900}.qdot.current{background:var(--accent);color:#111827}.qdot.used{opacity:.35}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}.infoCard{background:#f8fafc;color:#0f172a;border-radius:16px;padding:14px;min-height:120px;display:flex;flex-direction:column;justify-content:center}.infoCard h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.11em;color:#64748b;margin:0 0 8px}.infoText{font-size:1.2rem;font-weight:950;line-height:1.12}.bigPrompt{font-size:1.22rem;font-weight:900;color:var(--warn);margin-top:12px;text-align:center}.hidden{display:none!important}
+@media(max-width:850px){header{align-items:flex-start;flex-direction:column}.choices,.cards{grid-template-columns:1fr}.question{font-size:1.5rem}.qbar{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Internet History Open-Note Game</h1><p class="subtitle">4 teams use the study guide, discuss, answer, then explain.</p></div>
+  <div class="progress" id="overallProgress">Activity 1 of 3</div>
+</header>
+<main>
+  <div class="tabs">
+    <button class="tab active" data-panel="game1">1. Misconception Check</button>
+    <button class="tab" data-panel="game2">2. Fix the Timeline </button>
+    <button class="tab" data-panel="game3">3. Problem → Solution</button>
+  </div>
+
+  <section id="game1" class="panel active">
+    <div class="toprow"><div><h2 class="title">Activity 1 — Misconception Check</h2><p class="instructions">Teams decide: REAL or FAKE. All teams hold up the correct card.</p></div></div>
+    <div class="controls"><button class="btn primary" onclick="resetGame(1)">Reset</button><button class="btn blue" id="g1StartBtn" onclick="startQuestion(1)">Start Activity 1</button><button class="btn good hidden" id="g1RevealBtn" onclick="revealQuestion(1)">Reveal</button><button class="btn hidden" id="g1NextBtn" onclick="nextQuestion(1)">Next</button></div>
+    <div class="box" id="g1Box"><div class="startScreen"><div><p>Teams decide: REAL or FAKE. All teams hold up the correct card before timer runs out. You can use the study guide.</p></div></div></div>
+    <div class="qbar" id="g1bar"></div>
+  </section>
+
+  <section id="game2" class="panel">
+    <div class="toprow"><div><h2 class="title">Activity 2 — Fix the Timeline</h2><p class="instructions">Teams place events in order or decide what came before/after.</p></div></div>
+    <div class="controls"><button class="btn primary" onclick="resetGame(2)">Reset</button><button class="btn blue" id="g2StartBtn" onclick="startQuestion(2)">Start Activity 2</button><button class="btn good hidden" id="g2RevealBtn" onclick="revealQuestion(2)">Reveal</button><button class="btn hidden" id="g2NextBtn" onclick="nextQuestion(2)">Next</button></div>
+    <div class="box" id="g2Box"><div class="startScreen"><div><p>All four teams must place the four events in the correct historical order. After time is up, I will randomly call on one team to explain their ordering. Teams may be called more than once, so every team should be ready every round.</p></div></div></div>
+    <div class="qbar" id="g2bar"></div>
+  </section>
+
+  <section id="game3" class="panel">
+    <div class="toprow"><div><h2 class="title">Activity 3 — What Problem Did This Solve?</h2><p class="instructions">Teams answer in their own words. No choices are shown.</p></div></div>
+    <div class="controls"><button class="btn primary" onclick="resetGame(3)">Reset</button><button class="btn blue" id="g3StartBtn" onclick="startQuestion(3)">Start Activity 3</button><button class="btn good hidden" id="g3RevealBtn" onclick="revealQuestion(3)">Reveal Key Ideas</button><button class="btn hidden" id="g3NextBtn" onclick="nextQuestion(3)">Next</button></div>
+    <div class="box" id="g3Box"><div class="startScreen"><div><p>Each team answers in one sentence: <b>What problem did this solve?</b></p></div></div></div>
+    <div class="qbar" id="g3bar"></div>
+  </section>
+
+</main>
+<script>
+const data={
+1:[
+{q:'“The Internet and the World Wide Web are the same thing.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'The Internet is the global network infrastructure. The Web is one service that runs on top of it using technologies like HTML, URLs/URIs, and HTTP.'},
+{q:'“Tim Berners-Lee invented the Internet.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Berners-Lee developed the World Wide Web, not the Internet. The Internet came from earlier networking work such as ARPANET and TCP/IP.'},
+{q:'“The first ARPANET message was LOGIN.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'The goal was to send LOGIN, but the system crashed after the letters L and O.'},
+{q:'“Modern Internet access is completely wireless because we use Wi-Fi and cellular networks.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Wireless access often depends on wired fiber backbones, undersea cables, ISPs, and undersea cables.'},
+{q:'“Line Mode Browser helped expand access because it could run on many computers.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Line Mode Browser was cross-platform and made the Web accessible beyond NeXT machines, even though it was text-only.'},
+{q:'“Submarine cables carry only a small amount of global Internet traffic because most traffic uses satellites.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Most intercontinental Internet traffic travels through undersea fiber-optic cables, not satellites.'},
+{q:'“TCP/IP mattered because it helped different kinds of networks communicate with each other.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'TCP/IP provided shared protocols that allowed networks with different media and systems to interoperate.'},
+{q:'“ARPANET originally connected dozens of universities at launch.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'In 1969, ARPANET began with four sites: UCLA, Stanford Research Institute, UCSB, and the University of Utah.'},
+{q:'“The Line Mode Browser could display images like Mosaic.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Line Mode Browser was text-only and could not display inline images.'},
+{q:'“Mosaic was developed at MIT.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Mosaic was developed at NCSA at the University of Illinois Urbana-Champaign.'},
+{q:'“Netscape Navigator became important during the browser wars of the 1990s.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'Netscape was one of the dominant early commercial browsers during the browser wars.'},
+{q:'“Fiber-to-the-Home means Internet signals are delivered mainly through satellites.”',choices:['REAL','FAKE'],a:'FAKE',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'FTTH uses fiber-optic cables connected directly to homes, not satellites.'},
+{q:'“Tim Berners-Lee introduced HTML, HTTP, and URLs as core technologies of the Web.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'These technologies formed the foundation of the World Wide Web.'},
+{q:'“TCP/IP became the standard protocol for ARPANET in 1983.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'The ARPANET transition to TCP/IP helped create the modern Internet.'},
+{q:'“CSNET helped connect computer science departments and research centers.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'CSNET expanded networking access beyond military research institutions.'},
+{q:'“W3C was created to help coordinate and standardize Web technologies.”',choices:['REAL','FAKE'],a:'REAL',follow:'Discuss first. Hold up REAL or FAKE card when the timer runs out.',e:'W3C develops standards that help websites and browsers work consistently across the Web.'},
+],
+2:[
+{q:'Put these in historical order.',items:['Netscape Navigator launches','ARPANET goes live','World Wide Web proposal at CERN','Mosaic 1.0 popularizes graphical browsing'],a:'ARPANET goes live → World Wide Web proposal at CERN → Mosaic 1.0 → Netscape Navigator',follow:'Use the timeline anchors. What story does this order tell?',e:'The network came first, then the Web was proposed, then graphical browsing made it accessible, then commercial browsers expanded competition.'},
+{q:'Put these in order from earliest to latest.',items:['ARPANET switches to TCP/IP','CSNET joins the Internet','TCP/IP adopted by U.S. military','TCP/IP work begins between Cerf and Kahn'],a:'TCP/IP work begins → TCP/IP adopted by U.S. military → ARPANET switches to TCP/IP → CSNET joins the Internet',follow:'Use the timeline anchors. Why is TCP/IP the turning point?',e:'TCP/IP let different kinds of networks communicate through a shared protocol.'},
+{q:'Put these browser milestones in order.',items:['Mosaic popularizes graphical web browsing','WorldWideWeb browser/editor is built','Netscape Navigator launches','Line Mode Browser expands access beyond NeXT machines'],a:'WorldWideWeb browser/editor → Line Mode Browser → Mosaic → Netscape Navigator',follow:'Use the timeline anchors. What changed at each step?',e:'The Web moved from a NeXT-only browser/editor, to wider text access, to graphical public adoption, to commercial browser competition.'},
+{q:'Put these early networking ideas/events in order.',items:['ARPANET goes live','Licklider publishes “Galactic Network” ideas','Licklider and Bob Taylor publish “The Computer as a Communication Device”','First ARPANET message is sent from UCLA to SRI'],a:'Licklider’s “Galactic Network” ideas → “The Computer as a Communication Device” → ARPANET goes live → first ARPANET message from UCLA to SRI',follow:'Use the timeline anchors. Why do the ideas come before the system?',e:'The vision of connected computing and online communities existed before the technical network was built and tested.'}
+],
+3:[
+{q:'What problem did packet switching solve?',a:'It made communication less dependent on one fragile dedicated path.',follow:'Teams answer in one sentence.',e:'Packet switching made communication more flexible by splitting messages into packets that could travel through different routes.'},
+{q:'What problem did TCP/IP solve?',a:'It allowed different networks to communicate through shared protocols.',follow:'Teams answer in one sentence. Connect this to ARPANET, SATNET, and PRNET.',e:'TCP/IP helped networks with different transmission media and protocols interoperate as one larger internet.'},
+{q:'What problem did the Line Mode Browser solve?',a:'It made the Web usable beyond NeXT computers.',follow:'Teams answer in one sentence. What limitation did it still have?',e:'It was cross-platform and widely accessible, but it was text-only and could not show inline images.'},
+{q:'What problem did Mosaic solve?',a:'It made browsing more visual and usable for the general public.',follow:'Teams answer in one sentence. Name two features that helped.',e:'Mosaic had a graphical interface, point-and-click navigation, and inline images.'},
+{q:'What problem did W3C address?',a:'Coordinating web standards.',follow:'Teams answer in one sentence. Why do standards matter for the Web?',e:'Shared standards help browsers, websites, and developers work consistently across the Web.'},
+{q:'What problem does Fiber-to-the-Home address?',a:'It delivers high-speed fiber connections directly to homes.',follow:'Teams answer in one sentence. Why is fiber useful over long distances?',e:'Fiber has low signal loss over long distances and supports high-speed broadband.'},
+{q:'What problem did CERN making the Web public/open help solve?',a:'It helped the Web spread beyond one lab or institution.',follow:'Teams answer in one sentence. Why would openness matter for adoption?',e:'Making the Web software public/open allowed more people and organizations to use, build, and improve the Web.'},
+{q:'What problem did graphical browsers like Mosaic and Netscape help solve?',a:'They made the Web easier for non-experts to navigate and use.',follow:'Teams answer in one sentence. Connect this to public adoption.',e:'Graphical interfaces, point-and-click navigation, and inline images made the Web more approachable for ordinary users.'}
+],
+};
+const state={1:{i:0,started:false},2:{i:0,started:false},3:{i:0,started:false}};
+function $(id){return document.getElementById(id)}
+function escapeHtml(str){return String(str).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+function setActive(n){document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.panel==='game'+n));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='game'+n));$('overallProgress').textContent='Activity '+n+' of 3'}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setActive(Number(b.dataset.panel.replace('game',''))));
+function timerKey(n){return 'g'+n+'TimerInt'}
+function startTimer(n){let s=state[n].time;$('g'+n+'timer').textContent=s;window[timerKey(n)]=setInterval(()=>{s--;$('g'+n+'timer').textContent=s;if(s<=0){$('g'+n+'RevealBtn').classList.remove('hidden')}},1000)}
+function renderBar(n){const bar=$('g'+n+'bar');bar.innerHTML='';bar.style.gridTemplateColumns='repeat('+data[n].length+',1fr)';data[n].forEach((_,idx)=>{const d=document.createElement('div');d.className='qdot'+(idx===state[n].i?' current':'')+(idx<state[n].i?' used':'');d.textContent=idx+1;bar.appendChild(d)})}
+function startQuestion(n){if(state[n].i>=data[n].length)return;state[n].started=true;$('g'+n+'StartBtn').textContent='Restart Current';$('g'+n+'RevealBtn').classList.add('hidden');$('g'+n+'NextBtn').classList.add('hidden');renderQuestion(n);$('g'+n+'RevealBtn').classList.remove('hidden');renderBar(n)}
+function renderQuestion(n){const item=data[n][state[n].i];const box=$('g'+n+'Box');let body='';
+  if(item.items){
+    body=`<div class="cards">${item.items.map((x,i)=>`<div class="infoCard"><h3>Event ${i+1}</h3><div class="infoText">${escapeHtml(x)}</div></div>`).join('')}</div>`;
+  }else if(n===3){
+    body='';
+  }else{
+    const choices=item.choices.map(c=>`<div class="choice">${escapeHtml(c)}</div>`).join('');
+    body=`<div class="choices">${choices}</div>`;
+  }
+  box.innerHTML=`<div class="note">Question ${state[n].i+1} of ${data[n].length}</div><div class="question">${escapeHtml(item.q)}</div>${body}<div class="promptBox"><div class="promptTitle">Team task</div><div>${escapeHtml(item.follow)}</div></div><div class="answer" id="g${n}Answer"><div class="tag">${escapeHtml(item.a)}</div><div>${escapeHtml(item.e)}</div></div>`;
+}
+function revealQuestion(n){if(!state[n].started)return;$('g'+n+'RevealBtn').classList.add('hidden');$('g'+n+'NextBtn').classList.remove('hidden');const item=data[n][state[n].i];document.querySelectorAll('#g'+n+'Box .choice').forEach(el=>{if(el.textContent===item.a)el.classList.add('correct')});$('g'+n+'Answer').classList.add('show')}
+function nextQuestion(n){state[n].i++;if(state[n].i>=data[n].length){$('g'+n+'RevealBtn').classList.add('hidden');$('g'+n+'NextBtn').classList.add('hidden');$('g'+n+'StartBtn').textContent='Activity Complete';$('g'+n+'Box').innerHTML=`<div class="startScreen"><div><h3>Activity ${n} Complete!</h3><p>${n<3?'Move to the next activity when ready.':'Review complete. Ask: Which concept is still confusing — Internet vs Web, TCP/IP, packet switching, browsers, or standards?'}</p></div></div>`;renderBar(n);return;}startQuestion(n)}
+function resetGame(n){state[n].i=0;state[n].started=false;$('g'+n+'StartBtn').textContent='Start Activity '+n;$('g'+n+'RevealBtn').classList.add('hidden');$('g'+n+'NextBtn').classList.add('hidden');const setup={1:'Students can use the guide, but each team must also answer: <b>What is the misconception?</b> and <b>What should we remember instead?</b>',2:'Students may check the study guide, but they must explain why the order makes sense historically.',3:'Each team answers in one sentence: <b>What problem did this solve?</b> Then ask one team to justify their answer.'}[n];$('g'+n+'Box').innerHTML=`<div class="startScreen"><div><h3>Activity ${n} Setup</h3><p>${setup}</p></div></div>`;renderBar(n)}
+for(let i=1;i<=3;i++)renderBar(i);
+</script>
+</body>
+</html>
